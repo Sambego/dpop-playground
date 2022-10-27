@@ -21,7 +21,7 @@ const Step3: FC<Step3Props> = ({authorizationCode, handleNext, activeStep}) => {
             <h2><Num>3.</Num>Get the Authorization Code</h2>  
             <p>We were redirected back to our application on succeful logging in.</p>
             <p>When our Authorization server sent us back to our application, it attached the Authorization Code <Code>{authorizationCode}</Code> as the <Code>code</Code> url parameter.</p>
-            <Button disabled={activeStep !== 3} onClick={handleNext}>Now, let's create a DPoP proof</Button>
+            <Button disabled={activeStep !== 3} onClick={handleNext}>Now, let<>&apos;</>s create a DPoP proof</Button>
           </div>
         </Columns>
     </section>        

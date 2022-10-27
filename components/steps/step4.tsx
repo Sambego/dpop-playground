@@ -6,12 +6,13 @@ import Button from '../button'
 import JWT from '../jwt'
 import Code from '../code'
 import Num from '../number'
+import { KeyPair } from 'dpop'
 
 type Step4Props = {
     proof: string,
     DPoPPublicKey: jose.KeyLike,
     handleNext: FormEventHandler,
-    activeStep: number
+    activeStep: number,
 }
 
 const Step4: FC<Step4Props> = ({proof, DPoPPublicKey, handleNext, activeStep}) => {
@@ -42,8 +43,8 @@ const Step4: FC<Step4Props> = ({proof, DPoPPublicKey, handleNext, activeStep}) =
                     <h3>The DPoP JWT header</h3>
                     <p>The decoded header of our DPoP proof JSON Web token contain a few usefull pieces of information.</p>
                     <ul>
-                        <li><strong>The algorithm (alg)</strong> let's us know which digital signing algorithm has been used to sign the JWT.</li>
-                        <li><strong>The type (typ)</strong> tells us we're dealing with a JWT that can be used as a DPoP proof (<Code>dpop+jwt</Code>).</li>
+                        <li><strong>The algorithm (alg)</strong> let<>&apos;</>s us know which digital signing algorithm has been used to sign the JWT.</li>
+                        <li><strong>The type (typ)</strong> tells us we<>&apos;</>re dealing with a JWT that can be used as a DPoP proof (<Code>dpop+jwt</Code>).</li>
                         <li><strong>The JSON Web Key (jwk)</strong> provides us with the public key we can use to validate the signature.</li>
                     </ul>
 
@@ -53,10 +54,10 @@ const Step4: FC<Step4Props> = ({proof, DPoPPublicKey, handleNext, activeStep}) =
                         <li><strong>The issued at timestamp (iat)</strong> is a standard JSON Web Token claim that tells us what time the token has been created.</li>
                         <li><strong>The JWT ID (jti)</strong>  claim provides a unique identifier for the JWT.</li>
                         <li><strong>The HTTP Method (htm)</strong> states which HTTP method can be used with this proof.</li>
-                        <li><strong>The HTTP Request URI (htu)</strong> let's is know which URI we can request with this DPoP proof.</li>
+                        <li><strong>The HTTP Request URI (htu)</strong> let<>&apos;</>s is know which URI we can request with this DPoP proof.</li>
                     </ul>
 
-                    <Button disabled={activeStep !== 4} onClick={handleNext}>It's time to request an Access Token</Button>
+                    <Button disabled={activeStep !== 4} onClick={handleNext}>It<>&apos;</>s time to request an Access Token</Button>
                 </div>
                 <div>
                     <Terminal title="DPoP Proof JWT"><JWT jwt={proof}/></Terminal>

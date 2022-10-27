@@ -12,7 +12,8 @@ import Num from '../number'
 type Step6Props = {
     DPoPKeyPair: KeyPair | undefined,
     accessToken: string,
-    handleNext: FormEventHandler
+    handleNext: FormEventHandler,
+    activeStep: number
 }
 
 const Step6: FC<Step6Props> = ({DPoPKeyPair, accessToken = '', handleNext}) => {

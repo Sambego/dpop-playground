@@ -67,7 +67,9 @@ const Home: NextPage = () => {
       <Step1 key="step1" handleNext={handleNextStep} activeStep={step} clientId={clientId}/>,
       <Step2 key="step2" handleNext={handleNextStep} activeStep={step} clientId={clientId}/>,
       <Step3 key="step3" authorizationCode={authorizationCode} handleNext={handleNextStep} activeStep={step}/>,
+      // @ts-ignore
       <Step4 key="step4" proof={accessTokenRequestDPoPProof} DPoPPublicKey={DPoPKeyPair?.publicKey} handleNext={handleNextStep} activeStep={step}/>,
+      // @ts-ignore
       <Step5 key="step5" authorizationCode={authorizationCode} accessToken={accessToken} proof={accessTokenRequestDPoPProof} authorizationServerPublicKey={authorizationServerKeyPair?.publicKey} handleNext={handleNextStep} activeStep={step}/>,
       <Step6 key="step6" accessToken={accessToken} DPoPKeyPair={DPoPKeyPair} handleNext={handleNextStep} activeStep={step}/>
     ];
