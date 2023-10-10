@@ -3,8 +3,3 @@
     background: var(--grey-8);
     text-align: center;
 }
-
-.footer a {
-    text-decoration: none;
-    border-bottom: 1px dotted var(--grey-4);
-}
