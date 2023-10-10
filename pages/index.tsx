@@ -89,6 +89,12 @@ const Home: NextPage = () => {
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#99C794" />
         <meta name="msapplication-TileColor" content="#99C794" />
         <meta name="theme-color" content="#D8DEE9" />
+        <meta property="og:title" content="DPoP.info - Demonstrating Proof-of-Possession" />
+        <meta property="og:site_name" content="DPoP Info" />
+        <meta property="og:url" content="https://dpop.info" />
+        <meta property="og:description" content="DPoP (for Demonstrating Proof-of-Possession at the Application Layer) is an application-level mechanism for sender-constraining OAuth access and refresh tokens. It enables a client to prove the possession of a public/private key pair by including a DPoP header in an HTTP request. The value of the header is a JSON Web Token (JWT) [RFC7519] that enables the authorization server to bind issued tokens to the public part of a client's key pair. Recipients of such tokens are then able to verify the binding of the token to the key pair that the client has demonstrated that it holds via the DPoP header, thereby providing some assurance that the client presenting the token also possesses the private key. In other words, the legitimate presenter of the token is constrained to be the sender that holds and can prove possession of the private part of the key pair." />
+        <meta property="og:type" content="" />
+        <meta property="og:image" content="https://dpop.info/og.png"></meta>
       </Head>
 
       <main>
