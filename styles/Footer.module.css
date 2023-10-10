@@ -4,6 +4,10 @@
     text-align: center;
 }
 
+.footer p {
+    margin: 0;
+}
+
 .container {
     max-width: 100rem;
     margin: 0 auto;
