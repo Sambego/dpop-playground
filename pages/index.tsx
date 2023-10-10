@@ -18,6 +18,7 @@ import { getAccessToken } from '../helpers/accessToken';
 
 import Header from '../components/header';
 import Container from '../components/container';
+import Footer from '../components/footer';
 
 const steps = [Step1, Step2, Step3, Step4];
 
@@ -103,6 +104,8 @@ const Home: NextPage = () => {
         <Container>
           {renderSteps()}
         </Container>
+
+        <Footer />
       </main>
     </div>
   )
