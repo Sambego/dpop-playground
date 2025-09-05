@@ -226,6 +226,7 @@ export default function SettingsOverlay({
     }, 2000); // Increased debounce to 2 seconds to avoid interrupting typing
 
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.authServerUrl]); // Intentionally omit discoverEndpoints to prevent infinite loop
 
   // Test algorithm support when modal opens
