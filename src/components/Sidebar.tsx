@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CHAPTER_TITLES, URLS } from "@/constants/app";
+import { CHAPTER_TITLES } from "@/constants/app";
 import { useTheme } from "@/contexts/ThemeContext";
 
 interface SidebarProps {
@@ -17,8 +17,6 @@ export default function Sidebar({
   onSettingsClick,
   currentStep = 1,
   totalSteps = 8,
-  onPreviousStep,
-  onNextStep,
   onSidebarToggle,
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);

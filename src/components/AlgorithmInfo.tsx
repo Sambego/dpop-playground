@@ -131,7 +131,7 @@ export default function AlgorithmInfo({ isOpen, onClose }: AlgorithmInfoProps) {
       try {
         await testFunction();
         return true;
-      } catch (error) {
+      } catch {
         return false;
       }
     } catch {

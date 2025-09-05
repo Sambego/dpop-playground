@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
 type ResolvedTheme = 'light' | 'dark';
@@ -23,7 +23,7 @@ const getInitialTheme = (): Theme => {
       if (storedTheme && (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'system')) {
         return storedTheme;
       }
-    } catch (error) {
+    } catch {
       // localStorage not available
     }
   }
@@ -44,12 +44,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Function to resolve theme (handle system option)
-  const resolveTheme = (currentTheme: Theme): ResolvedTheme => {
+  const resolveTheme = useCallback((currentTheme: Theme): ResolvedTheme => {
     if (currentTheme === 'system') {
       return getSystemTheme();
     }
     return currentTheme;
-  };
+  }, []);
 
   // Initialize resolved theme and mark as mounted
   useEffect(() => {
@@ -69,7 +69,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     
     setMounted(true);
-  }, []);
+  }, [resolveTheme]);
 
   // Listen for system theme changes when using system theme
   useEffect(() => {
@@ -102,7 +102,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.warn('Failed to save theme to localStorage:', error);
     }
-  }, [theme, mounted]);
+  }, [theme, mounted, resolveTheme]);
 
   const toggleTheme = () => {
     setTheme(prevTheme => {

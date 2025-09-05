@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Step1UserLogin from "@/components/steps/Step1UserLogin";
 import Step2AuthServer from "@/components/steps/Step2AuthServer";
 import Step3AuthCode from "@/components/steps/Step3AuthCode";
@@ -128,12 +128,6 @@ export default function InteractiveFlow({
       }
 
       try {
-        const header = {
-          typ: "dpop+jwt",
-          alg: algorithm,
-          jwk: generatedKeys.jwk,
-        };
-
         const payload = {
           jti: "c1f05d8-8713-11eb-a935-0242ac110002",
           htm: "POST",
@@ -184,7 +178,7 @@ export default function InteractiveFlow({
     };
 
     generateAccessTokenKeys();
-  }, [settingsLoaded, accessTokenAlgorithm, showSuccess]);
+  }, [settingsLoaded, accessTokenAlgorithm, showSuccess, accessTokenKeys]);
 
   // Generate a complete DPoP JWT (base64url encoded header.payload.signature)
   const dpopJwtComplete = `${jwtParts?.header || "loading"}.${jwtParts?.payload || "loading"}.${jwtParts?.signature || "loading"}`;

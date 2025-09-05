@@ -1,7 +1,6 @@
 "use client";
 
 import ExplanationSection from "@/components/ui/ExplanationSection";
-import QueryParameterCard from "@/components/ui/QueryParameterCard";
 
 interface Step2ExplanationProps {
   onNextStep?: () => void;

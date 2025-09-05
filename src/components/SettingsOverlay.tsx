@@ -10,7 +10,7 @@ import {
   createSecureFetchOptions,
   type DpopSettings,
 } from "@/utils/security";
-import { URLS, SUPPORTED_ALGORITHMS } from "@/constants/app";
+import { URLS } from "@/constants/app";
 
 interface SettingsOverlayProps {
   isOpen: boolean;
@@ -123,7 +123,6 @@ export default function SettingsOverlay({
         secureOptions.cleanup();
 
         if (!response.ok) {
-          const errorText = await response.text();
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
@@ -207,7 +206,7 @@ export default function SettingsOverlay({
         setIsDiscovering(false);
       }
     },
-    [settings.authServerUrl, showSuccess, showError]
+    [showSuccess, showError, settings]
   );
 
   // Auto-discover when URL changes (but only once per URL) - with longer debounce to avoid interfering with typing
@@ -227,7 +226,7 @@ export default function SettingsOverlay({
     }, 2000); // Increased debounce to 2 seconds to avoid interrupting typing
 
     return () => clearTimeout(timeoutId);
-  }, [settings.authServerUrl]); // Removed discoverEndpoints dependency to prevent retry loops
+  }, [settings.authServerUrl, discoverEndpoints]);
 
   // Test algorithm support when modal opens
   useEffect(() => {

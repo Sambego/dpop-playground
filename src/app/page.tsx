@@ -10,7 +10,7 @@ import SettingsOverlay from "@/components/SettingsOverlay";
 import ConceptsPage from "@/components/ConceptsPage";
 import InteractiveFlow from "@/components/InteractiveFlow";
 import { isValidSectionId } from "@/utils/security";
-import { STEP_IDS, CHAPTER_TITLES } from "@/constants/app";
+import { STEP_IDS } from "@/constants/app";
 
 export default function Home() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);

@@ -11,7 +11,6 @@ interface Step3ExplanationProps {
 export default function Step3Explanation({
   onNextStep,
   nextStepLabel,
-  code,
 }: Step3ExplanationProps) {
   return (
     <ExplanationSection
