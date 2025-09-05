@@ -226,7 +226,7 @@ export default function SettingsOverlay({
     }, 2000); // Increased debounce to 2 seconds to avoid interrupting typing
 
     return () => clearTimeout(timeoutId);
-  }, [settings.authServerUrl, discoverEndpoints]);
+  }, [settings.authServerUrl]); // Intentionally omit discoverEndpoints to prevent infinite loop
 
   // Test algorithm support when modal opens
   useEffect(() => {
