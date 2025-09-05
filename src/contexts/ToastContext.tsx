@@ -28,7 +28,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     const newToast: Toast = {
       ...toast,
       id: generateId(),
-      duration: toast.duration || 5000,
+      duration: toast.duration || 3000,
     };
     
     setToasts((prev) => [...prev, newToast]);
@@ -39,7 +39,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
   };
 
   const showError = (title: string, message?: string, duration?: number) => {
-    showToast({ type: 'error', title, message, duration: duration || 7000 }); // Longer for errors
+    showToast({ type: 'error', title, message, duration: duration || 5000 }); // Shorter for errors
   };
 
   const showWarning = (title: string, message?: string, duration?: number) => {

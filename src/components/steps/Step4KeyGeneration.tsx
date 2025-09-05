@@ -293,11 +293,11 @@ export default function Step4KeyGeneration({
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="my-4 space-y-4">
                 <h3 className="text-xl font-bold text-white">
                   Key Generation Process
                 </h3>
-                <div className="space-y-3 text-gray-400">
+                <div className="space-y-4 text-gray-400">
                   <p>
                     The client generates a key pair using the configured
                     algorithm ({algorithm}). This key pair will be used for all
@@ -310,11 +310,11 @@ export default function Step4KeyGeneration({
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="my-4 space-y-4">
                 <h3 className="text-xl font-bold text-white">
                   Public Key JWK Thumbprint
                 </h3>
-                <div className="space-y-3 text-gray-400">
+                <div className="space-y-4 text-gray-400">
                   <p>
                     The public key JWK thumbprint is a SHA-256 hash of the
                     canonical public key JWK representation (
@@ -336,15 +336,15 @@ export default function Step4KeyGeneration({
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="my-4 space-y-4">
                 <h3 className="text-xl font-bold text-white">
                   Security Benefits
                 </h3>
-                <ul className="text-gray-400 space-y-2">
-                  <li>• Fresh key pair generated for each session</li>
-                  <li>• Private key never leaves the client</li>
-                  <li>• Public key enables server verification</li>
-                  <li>• Thumbprint provides stable key identification</li>
+                <ul className="list-disc pl-4 text-gray-400 space-y-2">
+                  <li>Fresh key pair generated for each session</li>
+                  <li>Private key never leaves the client</li>
+                  <li>Public key enables server verification</li>
+                  <li>Thumbprint provides stable key identification</li>
                 </ul>
               </div>
 

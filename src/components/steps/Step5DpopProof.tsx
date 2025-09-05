@@ -36,7 +36,7 @@ export default function Step5DpopProof({
       { threshold: 0.1 }
     );
 
-    const element = document.getElementById('step5');
+    const element = document.getElementById("step5");
     if (element) {
       observer.observe(element);
     }
@@ -108,72 +108,92 @@ export default function Step5DpopProof({
                   Step 5: Generate DPoP Proof JWT
                 </h2>
                 <p className="text-gray-400 leading-relaxed mb-6">
-                  Using the generated key pair from the previous step, the
-                  client creates a DPoP proof JWT to demonstrate possession of
-                  the private key. This JWT will be sent as a DPoP header with
-                  token requests.
+                  DPoP introduces the concept of a DPoP proof, which is a JSON
+                  Web Token (JWT) created by the client and sent with an HTTP
+                  request using the DPoP header field. Each HTTP request
+                  requires a unique DPoP proof
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 my-4 ">
                 <h3 className="text-xl font-bold text-white">How It Works</h3>
                 <div className="space-y-3 text-gray-400">
                   <p>
-                    The DPoP proof is a JSON Web Token (JWT) that
-                    cryptographically binds the access token to a specific
-                    client through public-key cryptography.
+                    A valid DPoP proof demonstrates to the server that the
+                    client holds the private key that was used to sign the DPoP
+                    proof JWT. This enables authorization servers to bind issued
+                    tokens to the corresponding public key and for resource
+                    servers to verify the key-binding of tokens that it
+                    receives, which prevents said tokens from being used by any
+                    entity that does not have access to the private key.
                   </p>
                   <p>
-                    It consists of three Base64URL-encoded parts separated by
-                    dots:
-                    <code className="text-accent">
-                      Header.Payload.Signature
-                    </code>
+                    The DPoP proof demonstrates possession of a key and, by
+                    itself, is not an authentication or access control
+                    mechanism.
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold text-white">JWT Components</h3>
+              <div className="space-y-4 my-4 ">
                 <div className="space-y-3">
-                  <div className="p-4 glass-card rounded-lg">
-                    <h4 className="font-semibold text-accent mb-2">Header</h4>
-                    <ul className="text-sm text-gray-400 space-y-1">
-                      <li>
-                        • <code className="text-accent">typ</code>: DPoP JWT
-                        type identifier
-                      </li>
-                      <li>
-                        • <code className="text-accent">alg</code>: {algorithm}
+                  <h3 className="text-xl font-bold text-white">
+                    The DPoP Proof header
+                  </h3>
+                  <div className="glass-card p-4">
+                    <div className="text-sm text-gray-400 space-y-1">
+                      <div className="flex">
+                        <code className="text-accent font-mono mr-3 min-w-fit">
+                          typ
+                        </code>
+                        : DPoP JWT type identifier
+                      </div>
+                      <div className="flex">
+                        <code className="text-accent font-mono mr-3 min-w-fit">
+                          alg
+                        </code>
+                        : {algorithm}
                         signature algorithm
-                      </li>
-                      <li>
-                        • <code className="text-accent">jwk</code>: Public key
-                        for verification
-                      </li>
-                    </ul>
+                      </div>
+                      <div className="flex">
+                        <code className="text-accent font-mono mr-3 min-w-fit">
+                          jwk
+                        </code>
+                        : Public key for verification
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="p-4 glass-card rounded-lg">
-                    <h4 className="font-semibold text-accent mb-2">Payload</h4>
-                    <ul className="text-sm text-gray-400 space-y-1">
-                      <li>
-                        • <code className="text-accent">jti</code>: Unique JWT
-                        identifier
-                      </li>
-                      <li>
-                        • <code className="text-accent">htm</code>: HTTP method
-                        (POST)
-                      </li>
-                      <li>
-                        • <code className="text-accent">htu</code>: Target token
-                        endpoint
-                      </li>
-                      <li>
-                        • <code className="text-accent">iat</code>: Issued at
-                        timestamp
-                      </li>
-                    </ul>
+                  <h3 className="text-xl font-bold text-white">
+                    The DPoP Proof payload
+                  </h3>
+                  <div className="glass-card p-4">
+                    <div className="text-sm text-gray-400 space-y-1">
+                      <div className="flex">
+                        <code className="text-accent font-mono mr-3 min-w-fit">
+                          jti
+                        </code>
+                        : Unique JWT identifier
+                      </div>
+                      <div className="flex">
+                        <code className="text-accent font-mono mr-3 min-w-fit">
+                          htm
+                        </code>
+                        : HTTP method (POST)
+                      </div>
+                      <div className="flex">
+                        <code className="text-accent font-mono mr-3 min-w-fit">
+                          htu
+                        </code>
+                        : Target token endpoint
+                      </div>
+                      <div className="flex">
+                        <code className="text-accent font-mono mr-3 min-w-fit">
+                          iat
+                        </code>
+                        : Issued at timestamp
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -182,27 +202,40 @@ export default function Step5DpopProof({
                 <h3 className="text-xl font-bold text-white">
                   Security Benefits
                 </h3>
-                <ul className="text-gray-400 space-y-2">
+                <ul className="list-disc pl-4 text-gray-400 space-y-2">
                   <li>
-                    • Cryptographically signed with the client's private key
+                    Cryptographically signed with the client's private key
                   </li>
-                  <li>• Bound to specific HTTP method and target URL</li>
-                  <li>• Contains the public key for server verification</li>
-                  <li>• Prevents token theft and replay attacks</li>
+                  <li>Bound to specific HTTP method and target URL</li>
+                  <li>Contains the public key for server verification</li>
+                  <li>Prevents token theft and replay attacks</li>
                 </ul>
               </div>
 
               <div className="pt-6">
                 <div className="glass-card rounded-lg p-6 bg-blue-500/10 border-blue-500/30">
                   <div className="flex items-center space-x-3 mb-3">
-                    <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-6 h-6 text-blue-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
-                    <h3 className="text-lg font-semibold text-blue-400">DPoP Proof Ready!</h3>
+                    <h3 className="text-lg font-semibold text-blue-400">
+                      DPoP Proof Ready!
+                    </h3>
                   </div>
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    The DPoP proof JWT is now ready to be used in the token exchange request. 
-                    This proof will bind the access token to your cryptographic key pair.
+                    The DPoP proof JWT is now ready to be used in the token
+                    exchange request. This proof will bind the access token to
+                    your cryptographic key pair.
                   </p>
                   <div className="mt-4">
                     <GlassButton

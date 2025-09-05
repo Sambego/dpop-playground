@@ -171,7 +171,10 @@ Accept: application/json`;
                 </h3>
                 <p className="text-gray-400 leading-relaxed">
                   To make a request to a protected API endpoint using our DPoP
-                  protected Access token, we can attach it to the Authorization
+                  protected Access token, we can attach it to the{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    Authorization
+                  </code>
                   header, using the DPoP authentication scheme.
                 </p>
               </div>
@@ -183,7 +186,11 @@ Accept: application/json`;
                 <p className="text-gray-400 leading-relaxed">
                   The request should also contain the DPoP header with a new
                   DPoP proof. This DPoP proof must include an Access Token Hash
-                  (ath) claim with a valid hash of the associated Access Token.
+                  (
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    ath
+                  </code>
+                  ) claim with a valid hash of the associated Access Token.
                 </p>
               </div>
 

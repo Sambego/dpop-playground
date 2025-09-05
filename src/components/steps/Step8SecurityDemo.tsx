@@ -156,11 +156,11 @@ Content-Type: application/json
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   DPoP Protection
                 </h3>
-                <ul className="text-gray-400 space-y-2">
-                  <li>• Prevents token theft and replay attacks</li>
-                  <li>• Cryptographically binds tokens to key pairs</li>
-                  <li>• Detects downgrade to Bearer authentication</li>
-                  <li>• Validates proof signatures on every request</li>
+                <ul className="list-disc pl-4 text-gray-400 space-y-2">
+                  <li>Prevents token theft and replay attacks</li>
+                  <li>Cryptographically binds tokens to key pairs</li>
+                  <li>Detects downgrade to Bearer authentication</li>
+                  <li>Validates proof signatures on every request</li>
                 </ul>
               </div>
             </div>

@@ -8,7 +8,10 @@ interface Step2ExplanationProps {
   nextStepLabel?: string;
 }
 
-export default function Step2Explanation({ onNextStep, nextStepLabel }: Step2ExplanationProps) {
+export default function Step2Explanation({
+  onNextStep,
+  nextStepLabel,
+}: Step2ExplanationProps) {
   const queryParameters = [
     {
       parameter: "response_type=code",
@@ -43,32 +46,50 @@ export default function Step2Explanation({ onNextStep, nextStepLabel }: Step2Exp
   return (
     <ExplanationSection
       title="2. Redirect to Authorization Server"
-      description="Your application redirects the user to the authorization server. The redirect includes your client_id, redirect_uri, response_type, and scope in the query parameters. Your application should also include a DPoP header with the first request to the authorization server."
-      note="The authorization server validates the user's credentials and generates an authorization code. This code will be used later to exchange for tokens with DPoP binding."
+      description="Once the user has clicked on the login button within our application, we will redirect to our Authorization Server to deal with logging in the user."
       onNextStep={onNextStep}
       nextStepLabel={nextStepLabel}
       nextStepTitle="Handle Authorization Response"
       nextStepDescription="After successful authentication, the authorization server will redirect back to your application with an authorization code that can be exchanged for tokens."
     >
-      <div className="text-sm text-gray-500 space-y-2">
-        <p>• Redirect includes OAuth 2.0 parameters</p>
-        <p>• DPoP header sent with authorization request</p>
-        <p>• User authenticates with credentials</p>
-        <p>• Authorization server validates identity</p>
+      <div className="my-4 space-y-4 text-gray-400">
+        <p>
+          If the user provides the correct credentials, the Authorization server
+          will redirect back to the application as specified in the{" "}
+          <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+            redirect_uri
+          </code>
+          query parameter. It will also attach an Authorization code, which we
+          exchange for an Access Token.
+        </p>
+      </div>
+      <div className="my-4 space-y-4">
+        <h3 className="text-xl font-bold text-white">
+          In this step we'll perform:
+        </h3>
+        <ul className="list-disc pl-4 text-gray-400 space-y-2">
+          <li>Redirect includes OAuth 2.0 parameters</li>
+          <li>DPoP header sent with authorization request</li>
+          <li>User authenticates with credentials</li>
+          <li>Authorization server validates identity</li>
+        </ul>
       </div>
 
-      <div className="space-y-4">
+      <div className="my-4 space-y-4">
         <h4 className="text-lg font-semibold text-white">
           Authorization Request Parameters
         </h4>
-        <div className="grid gap-3">
-          {queryParameters.map((param, index) => (
-            <QueryParameterCard
-              key={index}
-              parameter={param.parameter}
-              description={param.description}
-            />
-          ))}
+        <div className="glass-card p-4">
+          <div className="text-sm text-gray-400 space-y-1">
+            {queryParameters.map((param, index) => (
+              <div key={index} className="flex">
+                <code className="text-accent font-mono mr-3 min-w-fit">
+                  {param.parameter}
+                </code>
+                <span className="text-gray-400">— {param.description}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </ExplanationSection>

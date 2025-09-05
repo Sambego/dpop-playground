@@ -47,7 +47,7 @@ export default function Sidebar({
       <div
         className={`
         fixed left-0 bottom-0 z-50 transition-all duration-300 ease-in-out flex flex-col justify-end h-full
-        ${isCollapsed ? "translate-x-[-320px]" : "translate-x-0"}
+        ${isCollapsed ? "translate-x-[-100%] lg:translate-x-[-320px]" : "translate-x-0"}
       `}
       >
         <div className="w-80 glass-card-dark border-r border-border/40 backdrop-blur-xl flex flex-col m-4 rounded-2xl ml-4 mr-0">

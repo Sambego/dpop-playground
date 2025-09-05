@@ -304,9 +304,19 @@ export default function Step6TokenExchange({
                   To request an access token that is bound to a public key using
                   DPoP, the client must provide a valid DPoP proof JWT in a DPoP
                   header when making an access token request to the
-                  authorization server's /token endpoint. This is applicable for
-                  all access token requests regardless of grant type (including,
-                  for example, the common authorization_code and refresh_token
+                  authorization server's{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    /token
+                  </code>{" "}
+                  endpoint. This is applicable for all access token requests
+                  regardless of grant type (including, for example, the common{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    authorization_code
+                  </code>{" "}
+                  and{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    refresh_token
+                  </code>
                   grant types but also extension grants such as the JWT
                   authorization grant).
                 </p>
@@ -319,8 +329,15 @@ export default function Step6TokenExchange({
                 <p className="text-gray-400 leading-relaxed">
                   The Authorization server can validate that the DPoP proof
                   found in the DPoP header has a valid signature, and is issued
-                  for the correct {authServerUrl}/token URI and POST HTTP
-                  method.
+                  for the correct{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    {authServerUrl}/token
+                  </code>{" "}
+                  URI and{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    POST
+                  </code>{" "}
+                  HTTP method.
                 </p>
               </div>
 
@@ -331,13 +348,23 @@ export default function Step6TokenExchange({
                 <p className="text-gray-400 leading-relaxed mb-4">
                   When access tokens are represented as JSON Web Tokens, the
                   DPoP proof's public key information should be represented
-                  using the jkt confirmation method member in the access token's
-                  header.
+                  using the{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    jkt
+                  </code>{" "}
+                  confirmation method member in the access token's header.
                 </p>
                 <p className="text-gray-400 leading-relaxed">
                   To convey the hash of a public key in a JSON Web Token, the
-                  specification introduces the JSON Web Key Thumbprint jkt
-                  member under the confirmation cnf claim.
+                  specification introduces the JSON Web Key Thumbprint{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    jkt
+                  </code>{" "}
+                  member under the confirmation{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    cnf
+                  </code>{" "}
+                  claim.
                 </p>
                 <p className="text-gray-400 leading-relaxed">
                   With the DPoP proof's public key thumbprint available in the
@@ -357,8 +384,15 @@ export default function Step6TokenExchange({
                   OAuth's introspection endpoint to get more metainformation
                   about the token. When you query the introspection endpoint for
                   a DPoP protected Access Token, it should also return that
-                  confirmation cnf claim with the DPoP Proof's public key
-                  thumbprint jkt.
+                  confirmation{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    cnf
+                  </code>{" "}
+                  claim with the DPoP Proof's public key thumbprint{" "}
+                  <code className="mx-1 px-1 border rounded border-border bg-background-secondary">
+                    jkt
+                  </code>
+                  .
                 </p>
               </div>
             </div>

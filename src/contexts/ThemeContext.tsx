@@ -31,7 +31,7 @@ const getInitialTheme = (): Theme => {
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [theme, setTheme] = useState<Theme>('dark'); // Always start with 'dark' for SSR consistency
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
   const [mounted, setMounted] = useState(false);
 
@@ -53,11 +53,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize resolved theme and mark as mounted
   useEffect(() => {
-    // Set initial resolved theme based on current theme
-    setResolvedTheme(resolveTheme(theme));
+    // Load theme from localStorage after mount to avoid hydration mismatch
+    const storedTheme = getInitialTheme();
+    setTheme(storedTheme);
+    
+    // Set initial resolved theme based on stored theme
+    setResolvedTheme(resolveTheme(storedTheme));
     
     // Apply initial theme to document
-    const resolved = resolveTheme(theme);
+    const resolved = resolveTheme(storedTheme);
     if (resolved === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
     } else {
