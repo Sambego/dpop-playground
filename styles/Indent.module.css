@@ -1,9 +1,0 @@
-.indent {
-    display: block;
-    margin: 0 0 0 1.5rem;
-    text-indent: -1.5rem;
-}
-
-.indent::first-line {
-    text-indent: 0;
-}

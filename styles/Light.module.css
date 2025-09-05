@@ -1,9 +1,0 @@
-.light {
-    /* border-bottom: 1px dotted var(--grey-8); */
-    transition: color .2s ease-in-out;
-    color: var(--grey-8);
-}
-
-.light:hover {
-    color: #fff;
-}
