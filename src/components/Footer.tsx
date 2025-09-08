@@ -87,7 +87,8 @@ export default function Footer() {
         {
           name: "No Way, JOSE!",
           href: "https://jose.sambego.tech",
-          description: "A slidedeck explaining JSON Signing and Encryption",
+          description:
+            "A slidedeck explaining Javascript Object Signing and Encryption",
         },
         {
           name: "Sambego.tech",
