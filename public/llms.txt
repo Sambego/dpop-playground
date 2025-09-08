@@ -1,0 +1,375 @@
+# dpop.info - Interactive DPoP (Demonstrating Proof-of-Possession) Playground
+
+## Project Overview
+This is an interactive educational web application demonstrating OAuth2 DPoP (Demonstrating Proof-of-Possession) token binding. Built with Next.js 15 and TypeScript, it provides a step-by-step visualization of the DPoP flow with real-time cryptographic key generation and JWT creation.
+
+## Author
+Sam Bellen (@sambego)
+https://sambego.be
+
+---
+
+# Educational Content: DPoP (Demonstrating Proof-of-Possession)
+
+## What is DPoP?
+
+**DPoP (Demonstrating Proof-of-Possession)** is an application-level mechanism for sender-constraining OAuth tokens and refresh tokens as specified in **RFC 9449**. A method is needed to prove the possession of a private/public key pair by including a **DPoP header** on an HTTP request.
+
+The value of the header is a **DPoP Proof JWT** (**RFC 7519**) that enables the authorization server or API as well clients to bind the auth and request flow with a client's key and some claims about the current HTTP request. It provides a mechanism to bind the authentication process into each other by linking the corresponding process of the DPoP proof.
+
+## Core Concepts
+
+### Security Enhancement
+DPoP addresses the fundamental vulnerability of **bearer tokens** - that anyone who possesses the token can use it.
+
+**❌ Bearer Token Problem:**
+If stolen, can be used by anyone without restrictions
+
+**✅ DPoP Solution:**
+Tokens are cryptographically bound to the legitimate client
+
+Even if an access token is intercepted, attackers cannot use it without possessing the corresponding private key.
+
+### Key Benefits
+- Cryptographically binds tokens to specific clients
+- Prevents token theft and replay attacks
+- Works with public clients (SPAs, mobile apps)
+- No need for mutual TLS certificates
+
+## How DPoP Works
+
+### Step 1: Key Generation
+Client generates a public/private key pair and creates a **DPoP Proof JWT** signed with the private key.
+
+### Step 2: Token Binding
+Authorization server includes the public key thumbprint in the access token's **jkt claim**.
+
+### Step 3: Verification
+Resource server verifies the DPoP proof signature and matches the key thumbprint with the access token.
+
+## DPoP Proof JWT Structure
+
+### Header
+```json
+{
+  "typ": "dpop+jwt",
+  "alg": "ES256",
+  "jwk": {
+    "kty": "EC",
+    "crv": "P-256",
+    "x": "WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGHwHitJBcBmXQ",
+    "y": "y77As5vbZdIh6AzjmpUiEoC7loYxBBgOqoml2xx2L1o"
+  }
+}
+```
+
+### Payload
+```json
+{
+  "jti": "e1j3V_bX9gGOLHn1",
+  "htm": "POST",
+  "htu": "https://api.example.com/resource",
+  "iat": 1562262616,
+  "exp": 1562263216
+}
+```
+
+## Verification Process
+
+Resource servers must verify several aspects of the DPoP proof:
+- Verify JWT signature using the public key in the header
+- Check that HTTP method (htm) and URI (htu) match the request
+- Validate token expiration and uniqueness (jti claim)
+- Match public key thumbprint with access token's jkt claim
+
+## Use Cases
+
+### Public Clients
+Single Page Applications (SPAs) and mobile apps that cannot securely store secrets
+
+### Financial APIs
+FAPI 2.0 compliance for high-security financial applications
+
+### Zero Trust Security
+Environments where token binding is critical for security
+
+## DPoP JWT Claims Reference
+
+### Required Claims
+- **`jti`** (String): Unique identifier to prevent replay attacks
+- **`htm`** (String): HTTP method of the request (GET, POST, etc.)
+- **`htu`** (String): HTTP URI of the request (without query/fragment)
+- **`iat`** (Number): Token issued at timestamp
+
+### Optional Claims
+- **`exp`** (Number): Token expiration timestamp
+- **`nbf`** (Number): Token not valid before timestamp
+- **`ath`** (String): Base64url-encoded SHA-256 hash of access token
+
+## Standards & Specifications
+- **RFC 9449**: Official IETF specification for OAuth 2.0 DPoP
+- **FAPI 2.0**: Financial-grade API security profile compliance
+- **RFC 7519**: JSON Web Token (JWT) standard for DPoP proofs
+
+---
+
+# Interactive Tutorial: 8-Step DPoP Flow
+
+This application provides an interactive demonstration of the complete DPoP flow:
+
+## Step 1: User Login
+**"A user wants to login on your application"**
+
+Most applications require users to login to see certain pages or perform specific actions. In a modern OAuth 2.0/OpenID Connect scenario, the user is usually redirected to the authorization server to perform the authentication.
+
+**What happens in this step:**
+- User arrives at your application
+- Application detects unauthenticated state
+- Login button triggers OAuth flow initiation
+- PKCE parameters are generated for security
+
+## Step 2: Redirect to Authorization Server
+**"Redirect to Authorization Server"**
+
+Your application redirects the user to the authorization server. The redirect includes your client_id, redirect_uri, response_type, and scope in the query parameters. Your application should also include a DPoP header with the first request to the authorization server.
+
+**Authorization Request Parameters:**
+- `response_type=code` — Indicates authorization code grant flow
+- `client_id` — Unique identifier for the requesting application
+- `redirect_uri` — URL where the user will be redirected after authentication
+- `scope` — Permissions requested (openid, profile, email)
+- `state` — Random value for CSRF protection
+- `code_challenge` — SHA256 hash of code verifier (PKCE security)
+- `dpop_jkt` — JSON Web Key thumbprint for DPoP token binding
+
+## Step 3: Authorization Code Received
+**"Authorization Code Received"**
+
+After successful authentication, the authorization server redirects back to your application with an authorization code.
+
+The authorization code (e.g., "SplxlOBeZQQYbYS6WxSbIA") is short-lived and will be exchanged for DPoP-bound access tokens, providing cryptographic proof of key possession.
+
+## Step 4: Generate Cryptographic Keys
+**"Generate Key Pair"**
+
+Before creating DPoP proofs, we need to generate a cryptographic key pair. The public key will be included in DPoP JWTs, while the private key will be used for signing.
+
+**Key Generation Process:**
+1. **Algorithm Selection**: Choose from ES256, ES384, ES512, RS256, RS384, RS512, PS256, PS384, PS512, or EdDSA
+2. **Web Crypto API**: Use browser's native cryptographic functions for secure key generation
+3. **JWK Export**: Export both public and private keys in JSON Web Key format
+4. **Thumbprint Calculation**: Generate RFC 7638 compliant JWK thumbprint for key identification
+
+**Generated Key Pair Components:**
+- **Private Key**: Used for signing DPoP proofs (never transmitted)
+- **Public Key**: Included in DPoP JWT header for verification
+- **JWK Thumbprint**: Used in access token binding (`jkt` claim)
+
+**Example Key Pair (ES256):**
+```json
+// Public Key JWK
+{
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGHwHitJBcBmXQ",
+  "y": "y77As5vbZdIh6AzjmpUiEoC7loYxBBgOqoml2xx2L1o",
+  "alg": "ES256"
+}
+
+// Private Key JWK (includes 'd' parameter)
+{
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGHwHitJBcBmXQ", 
+  "y": "y77As5vbZdIh6AzjmpUiEoC7loYxBBgOqoml2xx2L1o",
+  "d": "Hndv7ZZjs_ke8o9zXYo3iq-Yr8SewI5vrqd0pAvqPqg",
+  "alg": "ES256"
+}
+```
+
+**Security Considerations:**
+- Keys are generated in browser memory only
+- Private key never leaves the client
+- Each session uses fresh key pairs
+- Multiple algorithms supported for compatibility
+
+## Step 5: Generate DPoP Proof JWT
+**"Generate DPoP Proof JWT"**
+
+DPoP introduces the concept of a DPoP proof, which is a JSON Web Token (JWT) created by the client and sent with an HTTP request using the DPoP header field. Each HTTP request requires a fresh DPoP proof to demonstrate possession of the private key.
+
+**DPoP Proof Purpose:**
+- **Prove Key Possession**: Demonstrates the client holds the private key corresponding to the public key
+- **Bind to Request**: Links the proof to the specific HTTP request (method, URI)
+- **Prevent Replay**: Each proof includes unique identifiers and timestamps
+- **Enable Verification**: Allows servers to cryptographically verify the proof
+
+**DPoP JWT Components:**
+1. **Header**: Contains JWT type, algorithm, and public key (JWK)
+2. **Payload**: Contains claims about the HTTP request and timestamps
+3. **Signature**: Created using the private key to prove possession
+
+## Step 6: Exchange Authorization Code
+**"Exchange Authorization Code"**
+
+Exchange the authorization code for an access token with the DPoP proof. The authorization server validates the DPoP proof and issues a DPoP-bound access token containing the `jkt` (JWK thumbprint) claim that matches the public key used to sign the DPoP proof.
+
+**Token Exchange Process:**
+1. **Create DPoP Proof**: Generate JWT signed with private key for the token endpoint
+2. **Send HTTP Request**: POST to token endpoint with DPoP header
+3. **Server Validation**: Authorization server verifies DPoP proof signature
+4. **Token Binding**: Server includes JWK thumbprint in access token's `jkt` claim
+5. **Response**: Server returns DPoP-bound access and refresh tokens
+
+## Step 7: API Request
+**"API Request"**
+
+Make authenticated API requests using the DPoP-bound access token. Each request must include a fresh DPoP proof that demonstrates possession of the bound private key.
+
+**DPoP JWT Structure Example (for Steps 5-7):**
+```json
+// Header
+{
+  "typ": "dpop+jwt",
+  "alg": "ES256",
+  "jwk": {
+    "kty": "EC",
+    "crv": "P-256",
+    "x": "WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGHwHitJBcKWPiLcn8_jHXy9u4gp",
+    "y": "y77as5WYULGjrLUKV_D8XmcMDdCyEFBCZVgZKVEjNfU_qgRZUgLUV5wQVBa",
+    "alg": "ES256"
+  }
+}
+
+// Payload
+{
+  "jti": "c1f05d8-8713-11eb-a935-0242ac110002",
+  "htm": "POST",
+  "htu": "https://auth.example.com/oauth/token",
+  "iat": 1641405000
+}
+```
+
+The DPoP proof is a signed JWT that proves possession of the private key. The header contains the public key (jwk claim) and the payload contains claims about the HTTP request.
+
+## Step 6: Token Exchange
+**"Token Exchange"**
+
+Exchange the authorization code for DPoP-bound access tokens. The authorization server will bind the tokens to your public key by including the key thumbprint in the token's `jkt` claim.
+
+**Token Exchange HTTP Request:**
+```http
+POST /oauth/token HTTP/1.1
+Host: auth.example.com
+Content-Type: application/x-www-form-urlencoded
+DPoP: [DPoP-Proof-JWT]
+
+grant_type=authorization_code&
+code=SplxlOBeZQQYbYS6WxSbIA&
+redirect_uri=https://app.example.com/callback&
+client_id=myapp-client-id
+```
+
+The authorization server validates the DPoP proof and issues a DPoP-bound access token containing the `jkt` (JWK thumbprint) claim that matches the public key used to sign the DPoP proof.
+
+## Step 7: API Request
+**"API Request"**
+
+Make authenticated API requests using the DPoP-bound access token. Each request must include a fresh DPoP proof that demonstrates possession of the bound private key.
+
+**Protected API Request:**
+```http
+GET /profile HTTP/1.1
+Host: api.example.com
+Authorization: DPoP [Access-Token]
+DPoP: [Fresh-DPoP-Proof-JWT]
+Accept: application/json
+```
+
+**API DPoP Proof Payload Example:**
+```json
+{
+  "jti": "d2f05d8-8713-11eb-a935-0242ac110003",
+  "htm": "GET",
+  "htu": "https://api.example.com/profile",
+  "iat": 1641405060,
+  "ath": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+}
+```
+
+The `ath` claim contains the base64url-encoded SHA-256 hash of the access token, binding the proof to the specific token being used.
+
+## Step 8: Security Demonstration
+**"Security Demo"**
+
+Demonstration of why DPoP tokens are more secure than regular bearer tokens, showing what happens when tokens are used without proper proof-of-possession.
+
+### Attack Scenario 1: Bearer Token Misuse
+**Malicious Request:**
+```http
+GET /profile HTTP/1.1
+Host: api.example.com
+Authorization: Bearer [DPoP-Bound-Access-Token]
+Accept: application/json
+```
+
+**API Response:**
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "error": "invalid_token",
+  "error_description": "DPoP-bound access token cannot be used with Bearer authentication scheme"
+}
+```
+
+### Attack Scenario 2: Wrong Private Key
+**Malicious Request with Wrong Key:**
+```http
+GET /profile HTTP/1.1
+Host: api.example.com
+Authorization: DPoP [Access-Token]
+DPoP: [JWT-Signed-With-Wrong-Private-Key]
+Accept: application/json
+```
+
+**API Response:**
+```http
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+
+{
+  "error": "invalid_dpop_proof",
+  "error_description": "DPoP proof signature verification failed - public key mismatch"
+}
+```
+
+### Security Benefits Demonstrated:
+- **Token theft protection**: Stolen tokens cannot be used without the corresponding private key
+- **Signature verification**: API servers can cryptographically verify token legitimacy
+- **Request binding**: Each DPoP proof is bound to the specific HTTP request (method, URI, token)
+- **Replay attack prevention**: Unique `jti` claims prevent proof reuse
+
+---
+
+## Key Features
+- Interactive step-by-step DPoP flow demonstration
+- Real-time ES256/PS256/RS256 key pair generation
+- JWT header/payload visualization with syntax highlighting
+- Configurable OAuth2 server endpoints
+- Dark/light theme support with system preference detection
+- Mobile-responsive design with disabled browser windows on mobile
+- Toast notifications for user feedback
+- Settings overlay for customization
+
+## Browser Support
+- Modern browsers with ES6+ support
+- Web Crypto API required for cryptographic operations
+- Responsive design for mobile/tablet/desktop
+
+## Purpose
+Educational tool for developers learning OAuth2 DPoP specification (RFC 9449), providing hands-on experience with token binding concepts through interactive demonstrations.
+
+---
+This file is provided for AI systems to better understand the project structure, educational content, and context when analyzing or working with this codebase.
