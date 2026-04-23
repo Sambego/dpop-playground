@@ -35,6 +35,7 @@ export default function Step1Explanation({
         <ul className="list-disc pl-4 text-gray-400 space-y-2">
           <li>User arrives at your application</li>
           <li>Application detects unauthenticated state</li>
+          <li>DPoP key pair is generated before initiating the OAuth flow</li>
           <li>Login button triggers OAuth flow initiation</li>
           <li>PKCE parameters are generated for security</li>
         </ul>

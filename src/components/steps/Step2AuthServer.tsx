@@ -12,6 +12,7 @@ interface Step2AuthServerProps {
   onScrollToSection: (sectionId: string) => void;
   authServerUrl: string;
   authorizationEndpoint: string;
+  dpopJkt: string;
 }
 
 export default function Step2AuthServer({
@@ -20,6 +21,7 @@ export default function Step2AuthServer({
   onScrollToSection,
   authServerUrl,
   authorizationEndpoint,
+  dpopJkt,
 }: Step2AuthServerProps) {
   const buildAuthUrl = (baseUrl: string) => {
     const params = new URLSearchParams({
@@ -30,7 +32,7 @@ export default function Step2AuthServer({
       state: DEMO_VALUES.STATE,
       code_challenge: DEMO_VALUES.CODE_CHALLENGE,
       code_challenge_method: OAUTH_CONFIG.CODE_CHALLENGE_METHOD,
-      dpop_jkt: DEMO_VALUES.DPOP_JKT,
+      dpop_jkt: dpopJkt,
     });
     return `${baseUrl}?${params.toString()}`;
   };

@@ -10,6 +10,7 @@ import Step6TokenExchange from "@/components/steps/Step6TokenExchange";
 import Step7ApiRequest from "@/components/steps/Step7ApiRequest";
 import Step8SecurityDemo from "@/components/steps/Step8SecurityDemo";
 import { safeJsonParse, isDpopSettings } from "@/utils/security";
+import { DEMO_VALUES } from "@/constants/app";
 import { useToast } from "@/contexts/ToastContext";
 import { type GeneratedKeyPair, generateKeyPair, signJwt } from "@/utils/cryptoUtils";
 
@@ -158,6 +159,25 @@ export default function InteractiveFlow({
     generateRealJwtParts();
   }, [generatedKeys, algorithm, authServerUrl]);
 
+  // Auto-generate DPoP keys when settings are loaded — must happen before step 2
+  // so the real thumbprint is available for the dpop_jkt authorization request param.
+  useEffect(() => {
+    const generateDpopKeys = async () => {
+      if (!settingsLoaded || !algorithm) return;
+      if (generatedKeys && generatedKeys.jwk.alg === algorithm) return;
+
+      try {
+        const keys = await generateKeyPair(algorithm);
+        setGeneratedKeys(keys);
+      } catch (error) {
+        console.error("Failed to generate DPoP keys:", error);
+        setGeneratedKeys(null);
+      }
+    };
+
+    generateDpopKeys();
+  }, [settingsLoaded, algorithm, generatedKeys]);
+
   // Generate access token keys when needed
   useEffect(() => {
     const generateAccessTokenKeys = async () => {
@@ -167,9 +187,7 @@ export default function InteractiveFlow({
       try {
         const keys = await generateKeyPair(accessTokenAlgorithm);
         setAccessTokenKeys(keys);
-        
-        // Show toast for all key generation (not just after initial load)
-        // The user should be notified whenever keys are regenerated
+
         showSuccess('Access Token Keys Generated', `${accessTokenAlgorithm} key pair generated successfully for signing access tokens`);
       } catch (error) {
         console.error("Failed to generate access token keys:", error);
@@ -247,6 +265,7 @@ export default function InteractiveFlow({
         onScrollToSection={onScrollToSection}
         authServerUrl={authServerUrl}
         authorizationEndpoint={authorizationEndpoint}
+        dpopJkt={generatedKeys?.thumbprint ?? DEMO_VALUES.DPOP_JKT}
       />
 
       {/* Step 3: Get Authorization Code */}
@@ -260,7 +279,7 @@ export default function InteractiveFlow({
         algorithm={algorithm}
         onScrollToSection={onScrollToSection}
         onKeysGenerated={setGeneratedKeys}
-        settingsLoaded={settingsLoaded}
+        generatedKeys={generatedKeys}
       />
 
       {/* Step 5: Create DPoP proof */}

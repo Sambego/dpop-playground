@@ -16,16 +16,15 @@ interface Step4KeyGenerationProps {
   algorithm: string;
   onScrollToSection: (sectionId: string) => void;
   onKeysGenerated: (keys: GeneratedKeyPair) => void;
-  settingsLoaded: boolean;
+  generatedKeys: GeneratedKeyPair | null;
 }
 
 export default function Step4KeyGeneration({
   algorithm,
   onScrollToSection,
   onKeysGenerated,
-  settingsLoaded,
+  generatedKeys,
 }: Step4KeyGenerationProps) {
-  const [keys, setKeys] = useState<GeneratedKeyPair | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const { showError, showSuccess } = useToast();
@@ -56,12 +55,11 @@ export default function Step4KeyGeneration({
   const handleGenerateKeys = useCallback(async () => {
     setIsGenerating(true);
     try {
-      const generatedKeys = await generateKeyPair(algorithm);
-      setKeys(generatedKeys);
-      onKeysGenerated(generatedKeys);
+      const newKeys = await generateKeyPair(algorithm);
+      onKeysGenerated(newKeys);
       showSuccess(
-        "DPoP Keys Generated",
-        `${algorithm} key pair generated successfully for signing DPoP proofs`
+        "DPoP Keys Regenerated",
+        `${algorithm} key pair regenerated successfully`
       );
     } catch (error) {
       console.error("Key generation failed:", error);
@@ -73,13 +71,6 @@ export default function Step4KeyGeneration({
       setIsGenerating(false);
     }
   }, [algorithm, onKeysGenerated, showError, showSuccess]);
-
-  // Auto-generate keys when algorithm changes and settings are loaded
-  useEffect(() => {
-    if (settingsLoaded && algorithm && (!keys || keys.jwk.alg !== algorithm)) {
-      handleGenerateKeys();
-    }
-  }, [algorithm, keys, handleGenerateKeys, settingsLoaded]);
 
   return (
     <Section id="step4" className="bg-section-dark">
@@ -117,15 +108,15 @@ export default function Step4KeyGeneration({
                     />
                   </svg>
                 </h3>
-                {keys && (
-                  <CopyButton content={formatJwkForDisplay(keys.privateJwk)} />
+                {generatedKeys && (
+                  <CopyButton content={formatJwkForDisplay(generatedKeys.privateJwk)} />
                 )}
               </div>
               <div className="p-4">
                 <div className="bg-code-editor rounded-lg p-4 font-mono text-sm overflow-x-auto">
-                  {keys ? (
+                  {generatedKeys ? (
                     <JsonWithTooltips
-                      jsonString={formatJwkForDisplay(keys.privateJwk)}
+                      jsonString={formatJwkForDisplay(generatedKeys.privateJwk)}
                     />
                   ) : (
                     <div className="flex items-center justify-center py-8">
@@ -180,13 +171,13 @@ export default function Step4KeyGeneration({
                 <h3 className="text-sm font-semibold text-white">
                   Public Key (JWK Format)
                 </h3>
-                {keys && <CopyButton content={formatJwkForDisplay(keys.jwk)} />}
+                {generatedKeys && <CopyButton content={formatJwkForDisplay(generatedKeys.jwk)} />}
               </div>
               <div className="p-4">
                 <div className="bg-code-editor rounded-lg p-4 font-mono text-sm overflow-x-auto">
-                  {keys ? (
+                  {generatedKeys ? (
                     <JsonWithTooltips
-                      jsonString={formatJwkForDisplay(keys.jwk)}
+                      jsonString={formatJwkForDisplay(generatedKeys.jwk)}
                     />
                   ) : (
                     <div className="flex items-center justify-center py-8">
@@ -250,13 +241,13 @@ export default function Step4KeyGeneration({
                   </a>
                   )
                 </h3>
-                {keys && <CopyButton content={keys.thumbprint} />}
+                {generatedKeys && <CopyButton content={generatedKeys.thumbprint} />}
               </div>
               <div className="p-4">
                 <div className="bg-code-editor rounded-lg p-4 font-mono text-sm text-gray-300 overflow-x-auto">
-                  {keys ? (
+                  {generatedKeys ? (
                     <pre className="whitespace-pre-wrap break-all">
-                      {keys.thumbprint}
+                      {generatedKeys.thumbprint}
                     </pre>
                   ) : (
                     <div className="flex items-center justify-center py-4">
@@ -284,28 +275,34 @@ export default function Step4KeyGeneration({
             >
               <div className="border-l-4 border-accent pl-6">
                 <h2 className="text-3xl font-bold text-white mb-4">
-                  Step 4: Generate Key Pair
+                  Step 4: The Key Pair
                 </h2>
                 <p className="text-gray-400 leading-relaxed mb-6">
-                  Before creating DPoP proofs, we need to generate a
-                  cryptographic key pair. The public key will be included in
-                  DPoP JWTs, while the private key will be used for signing.
+                  Back in step 1, when the page loaded, we silently generated a
+                  cryptographic key pair using {algorithm}. We needed it ready
+                  before step 2 so we could include the public key thumbprint
+                  as <code className="px-1 border rounded border-border bg-background-secondary">dpop_jkt</code> in
+                  the authorization request. Here's what was generated.
                 </p>
               </div>
 
               <div className="my-4 space-y-4">
                 <h3 className="text-xl font-bold text-white">
-                  Key Generation Process
+                  What is a DPoP Key Pair?
                 </h3>
                 <div className="space-y-4 text-gray-400">
                   <p>
-                    The client generates a key pair using the configured
-                    algorithm ({algorithm}). This key pair will be used for all
-                    subsequent DPoP proofs.
+                    A DPoP key pair is an asymmetric keypair — a private key
+                    that stays on the client and a public key that gets shared
+                    with the authorization server. Every DPoP proof JWT is
+                    signed with the private key and includes the public key in
+                    its header, so the server can verify the signature without
+                    ever seeing the private key.
                   </p>
                   <p>
-                    The public key is formatted as a JSON Web Key (JWK) and will
-                    be included in the DPoP JWT header for server verification.
+                    The public key is serialized as a JSON Web Key (JWK). The
+                    private key is held in the browser's Web Crypto API as a
+                    non-extractable <code className="px-1 border rounded border-border bg-background-secondary">CryptoKey</code> — it can sign but cannot be read out of the browser.
                   </p>
                 </div>
               </div>
@@ -338,13 +335,13 @@ export default function Step4KeyGeneration({
 
               <div className="my-4 space-y-4">
                 <h3 className="text-xl font-bold text-white">
-                  Security Benefits
+                  Why Generate at Page Load?
                 </h3>
                 <ul className="list-disc pl-4 text-gray-400 space-y-2">
-                  <li>Fresh key pair generated for each session</li>
-                  <li>Private key never leaves the client</li>
-                  <li>Public key enables server verification</li>
-                  <li>Thumbprint provides stable key identification</li>
+                  <li>The thumbprint must be in the authorization request — so the key pair must exist before step 2</li>
+                  <li>A fresh key pair each session limits the blast radius if a token is stolen</li>
+                  <li>The private key never leaves the browser's crypto subsystem</li>
+                  <li>The thumbprint gives the authorization server a stable, compact key identifier</li>
                 </ul>
               </div>
 
@@ -365,18 +362,17 @@ export default function Step4KeyGeneration({
                       />
                     </svg>
                     <h3 className="text-lg font-semibold text-blue-400">
-                      Create Your First DPoP Proof
+                      Create a DPoP Proof
                     </h3>
                   </div>
                   <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                    With your key pair generated, you're ready to create a DPoP
-                    proof JWT. This proof will demonstrate possession of the
-                    private key and can be used to bind tokens to your client
-                    application.
+                    Now that you've seen the key pair, the next step is to use
+                    the private key to sign a DPoP proof JWT. That proof is what
+                    you'll attach to the token exchange request in step 6.
                   </p>
                   <GlassButton
                     onClick={() => onScrollToSection("step5")}
-                    disabled={!keys || isGenerating}
+                    disabled={!generatedKeys || isGenerating}
                     className="w-full"
                   >
                     {isGenerating ? (
@@ -400,12 +396,12 @@ export default function Step4KeyGeneration({
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
                         </svg>
-                        <span>Generating Keys...</span>
+                        <span>Regenerating Keys...</span>
                       </>
-                    ) : keys ? (
+                    ) : generatedKeys ? (
                       <span>Create DPoP Proof with these keys →</span>
                     ) : (
-                      <span>Generate Keys First</span>
+                      <span>Keys not yet available</span>
                     )}
                   </GlassButton>
                 </div>
