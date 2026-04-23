@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Section from "@/components/Section";
 import CopyButton from "@/components/ui/CopyButton";
 import GlassButton from "@/components/ui/GlassButton";
@@ -25,7 +25,7 @@ export default function Step7ApiRequest({
   onScrollToSection,
 }: Step7ApiRequestProps) {
   const [realDpopJwt, setRealDpopJwt] = useState<string>("");
-  const [isSigningDpop, setIsSigningDpop] = useState(false);
+  const isSigningDpop = useRef(false);
 
   // Mock hash for now since we can't use async in render
   const mockAccessTokenHash = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
@@ -33,8 +33,8 @@ export default function Step7ApiRequest({
   // Generate real DPoP JWT when keys are available
   useEffect(() => {
     const generateRealDpopJwt = async () => {
-      if (generatedKeys && !isSigningDpop) {
-        setIsSigningDpop(true);
+      if (generatedKeys && !isSigningDpop.current) {
+        isSigningDpop.current = true;
         try {
           const payload = {
             jti: "d2f05d8-8713-11eb-a935-0242ac110003",
@@ -57,13 +57,13 @@ export default function Step7ApiRequest({
           // Fall back to mock signature if signing fails
           setRealDpopJwt("");
         } finally {
-          setIsSigningDpop(false);
+          isSigningDpop.current = false;
         }
       }
     };
 
     generateRealDpopJwt();
-  }, [generatedKeys, algorithm, mockAccessTokenHash, isSigningDpop]);
+  }, [generatedKeys, algorithm]);
 
   // Get JWK from generated keys or fallback
   const getJwkForDisplay = () => {
@@ -264,7 +264,7 @@ Accept: application/json`;
               <div className="p-4">
                 <div className="bg-code-editor rounded-lg p-4 font-mono text-sm overflow-x-auto">
                   <pre className="whitespace-pre-wrap">
-                    {apiRequestLines.map((line, index) => {
+                    {apiRequestLines.map((_line, index) => {
                       if (index === 0) {
                         // GET line
                         return (
