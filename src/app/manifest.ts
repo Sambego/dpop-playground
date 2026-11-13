@@ -36,3 +36,6 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'portrait-primary',
   }
 }
+
+// Required by output: 'export' (Cloudflare Workers static assets)
+export const dynamic = 'force-static';

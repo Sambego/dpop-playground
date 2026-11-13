@@ -11,3 +11,6 @@ export default function robots(): MetadataRoute.Robots {
     sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
+
+// Required by output: 'export' (Cloudflare Workers static assets)
+export const dynamic = 'force-static';

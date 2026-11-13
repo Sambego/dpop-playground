@@ -13,3 +13,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 }
+
+// Required by output: 'export' (Cloudflare Workers static assets)
+export const dynamic = 'force-static';
