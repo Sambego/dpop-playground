@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Static export for Cloudflare Workers (static assets)
+  output: 'export',
+  images: { unoptimized: true },
   // ESLint enabled for security and code quality  
   eslint: {
     dirs: ['src'],
